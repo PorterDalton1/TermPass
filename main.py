@@ -1,4 +1,6 @@
 import Credentials
-import encrypt
+import EncryptFolder
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
 
-encrypt.encryptFile(12)
+pass
