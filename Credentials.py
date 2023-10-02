@@ -1,12 +1,14 @@
-import hashlib
-import pickle
 
 class Credentials:
-    def __init__(self):
+    def __init__(self, username):
         '''inits secure notes and credentials '''
+        self.username = username
         self.secure_notes = [] # List of tuples (note_name, file_name)
         self.credentials = [] # List of tuples containing the credentials. ID is the subscript of each item
 
+    def getUsername(self):
+        return self.username
+    
     def addCredentials(self, name=None, url=None, email1=None, email2=None, username=None, password=None, notes=None):
         '''To add credentials given all the info'''
         self.credentials.append((name, url, email1, email2, username, password, notes))
@@ -31,9 +33,6 @@ class Credentials:
 
     def addSecure_note(self, note):
         pass
-
-
-x = Credentials()
 
 '''
 x.addData(name='Google', url='https://www.Google.com', email1='holycarton@gmail.com', username='holycarton', password='1234')

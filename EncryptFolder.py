@@ -3,7 +3,6 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import os
-import pickle
 import Credentials
 
 '''
@@ -17,10 +16,13 @@ with open('private_key.pem', 'rb') as key_file:
 class EncryptFolder:
     def __init__(self, user):
         self.user = user
+        self.public_keyPEM = self.user.username + '-public_key.pem'
+        self.private_keyPEM = self.user.username + '-private_key.pem'
 
     def createPublicAndPrivateKeyFiles(self, password):
-        '''Creates the public and private keys and saves it to a file'''
+        '''Creates the public and private keys and saves them to a file'''
         #Create private Key and save it to file
+        password = password.encode('ascii') #Turn into binary string || 'password' -> b'password'
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048,
@@ -34,7 +36,7 @@ class EncryptFolder:
             encryption_algorithm=serialization.BestAvailableEncryption(password) #<-- Pasword here
         )
 
-        with open('private_key.pem', 'wb') as key_file:
+        with open(self.private_keyPEM, 'wb') as key_file:
             key_file.write(private_key_bytes)
 
         #Create public key and write it to file
@@ -44,12 +46,13 @@ class EncryptFolder:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-        with open('public_key.pem', 'wb') as key_file:
+        with open(self.public_keyPEM, 'wb') as key_file:
             key_file.write(public_key_bytes)
 
-    def private_key(self, privateFile, password):
+    def get_private_key(self, password):
         '''Opens the private key file with a password and returns it'''
-        with open(privateFile, 'rb') as key_file:
+        password = password.encode('ascii') #Turn into binary string || 'password' -> b'password'
+        with open(self.private_keyPEM, 'rb') as key_file:
             private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=password,
@@ -58,9 +61,9 @@ class EncryptFolder:
         return private_key
 
 
-    def public_key(self, publicFile):
-        '''Opens a public key file and retunrs it'''
-        with open(publicFile, 'rb') as key_file:
+    def get_public_key(self):
+        '''Opens a public key file and returns it'''
+        with open(self.public_keyPEM, 'rb') as key_file:
             public_key = serialization.load_pem_public_key(
                 key_file.read(),
                 backend=default_backend()
