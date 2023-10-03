@@ -13,7 +13,7 @@ with open('private_key.pem', 'rb') as key_file:
         backend=default_backend()
     )
 '''
-class EncryptFolder:
+class EncryptUserData:
     def __init__(self, user):
         self.user = user
         self.public_keyPEM = self.user.username + '-public_key.pem'
@@ -70,7 +70,7 @@ class EncryptFolder:
             )
         return public_key
 
-    def encrypt_folder(self, folder_path, public_key):
+    def encrypt_file(self, folder_path, public_key):
         '''Given the folder_path and the public key, the folder_path will encrypt the whole folder'''
         for filename in os.listdir(folder_path):
             file_path = os.path.join(folder_path, filename)
@@ -86,7 +86,7 @@ class EncryptFolder:
                 file.write(ciphertext)
 
 
-    def decrypt_folder(self, folder_path, private_key):
+    def decrypt_file(self, folder_path, private_key):
         '''Given the private key, will decrypt the whole folder'''
         for filename in os.listdir(folder_path):
             file_path = os.path.join(folder_path, filename)
