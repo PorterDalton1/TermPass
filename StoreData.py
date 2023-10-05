@@ -1,30 +1,38 @@
-import shutil
+import shutil #using make_archive and rmtree
 import os
 import pickle
 from Credentials import UserInfo
-from EncryptUserData import EncryptUserData
+import EncryptUserData
+from GLOBAL_VARIABLES import *
 
 def pullData(username):
-    with open('./users/' + username + '/websiteCredentials.dat', 'rb') as websiteCredentialsFile:
+    with open(WORKING_DIR + username + '/data/websiteCredentials.dat', 'rb') as websiteCredentialsFile:
         return pickle.load(websiteCredentialsFile)
 
 def initDump(user):
     os.mkdir(user.getUserFolder())
+    os.mkdir(user.getUserFolder() + 'data/')
     dumpData(user)
 
 def dumpData(user):
     #User = UserInfo()
-    with open(user.getUserFolder() + '/websiteCredentials.dat', 'wb') as websiteCredentialsFile:
+    with open(user.getUserFolder() + 'data' + '/websiteCredentials.dat', 'wb') as websiteCredentialsFile:
         pickle.dump(user, websiteCredentialsFile)
 
 def zipAndEncrypt(username):
-    if (os.path.exists('./users/' + username + '.zip')):
+    extension = 'zip'
+    '''
+    path = WORKING_DIR + username + '/data'
+    if (os.path.exists(path + extension)):
         return
-    shutil.make_archive('./users/' + username, 'zip', './users/' + username)
-    os.rmdir('./users/' + username, )
+    shutil.make_archive(path, extension, path)
+    shutil.rmtree(path)
+    '''
 
+    path = WORKING_DIR + username + '/data'
+    path += '.' + extension
 
-zipAndEncrypt('mikeH23')
+    EncryptUserData.encrypt_file('./users/mikeH23/data.zip', EncryptUserData.get_public_key(username))
 
 '''
 x = UserInfo('mikeH23')
@@ -33,16 +41,16 @@ x.addCredentials(name='Amazon', url='https://www.Amazon.com', email1='porter.dal
 x.addCredentials(name='Tennis Warehouse', url='https://www.Tennis-Warehouse.com', email1='porter.dalton2@gmail.com', username='porterd', password='fh4$%F')
 x.addCredentials(name='Piano Studio', url='https://app.pianostudio.com', email1='porter.dalton2@gmail.com', username='porterdalton', password='nfeuiuy43', notes='Secret key: 45237')
 
-manageData(x).dumpData()
+dumpData(x)
 
 y = pullData('mikeH23')
 y.printData()
 
 y.addCredentials(name='topSpin', url='https://www.topSpin.com', email1='BigAss69@gmail.com', username='fatassery', password='sugarmomma')
+y.addCredentials(name='jimmyWhat', url='https://www.JimmyWhat.com', email1='porter.dalton2@gmail.com', username='jimmy', password='lshbfy6682jsghsyuywu7z')
 
-manageData(y).dumpData()
+dumpData(y)
 
 z = pullData('mikeH23')
-
-z.printData()
 '''
+zipAndEncrypt('mikeH23')
